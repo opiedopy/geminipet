@@ -1,11 +1,8 @@
-/* SERVICE WORKER: sw.js
-  Target Platforms: iPhone 12/15, Recent MacBook/iPad [cite: 4]
-*/
+/* SERVICE WORKER: sw.js */
 
-const CACHE_VERSION = 'v12'; 
+const CACHE_VERSION = 'v14'; 
 const CACHE_NAME = `mypetshop-cache-${CACHE_VERSION}`;
 
-// [cite: 5, 21-25]
 const ASSETS_TO_CACHE = [
     '/mypetshop2/',
     '/mypetshop2/index.html',
@@ -18,13 +15,12 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            console.log('Caching pet shop assets');
             return cache.addAll(ASSETS_TO_CACHE);
         })
     );
 });
 
-// [cite: 35, 36]
+// Force the new SW to take control of all open tabs immediately [cite: 35-36]
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
@@ -34,7 +30,6 @@ self.addEventListener('activate', (event) => {
                 })
             );
         }).then(() => {
-            // FOR SAFARI: Force the new SW to take control of all open tabs immediately 
             return self.clients.claim();
         })
     );
@@ -48,7 +43,7 @@ self.addEventListener('fetch', (event) => {
     );
 });
 
-// [cite: 37]
+// Handle the skipWaiting message [cite: 37]
 self.addEventListener('message', (event) => {
     if (event.data && event.data.action === 'skipWaiting') {
         self.skipWaiting();
