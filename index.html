@@ -3,139 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Welcome to my very new Gemini Pet Shop ver 14</title>
-    
+    <title>Gemini Pet Shop ver 15</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="images/curler-hamster-icon.png">
-    
     <link rel="manifest" href="manifest.json">
-    
     <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            text-align: center; 
-            background-color: #f8f9fa; 
-            margin: 0; 
-            padding: 20px; 
-            padding-top: env(safe-area-inset-top); 
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        
-        h1 { color: #222; margin-top: 20px; }
-
-        .gallery {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            margin-top: 30px;
-            flex-grow: 1;
-        }
-
-        .gallery img { 
-            width: 90%; 
-            max-width: 500px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
-            transition: transform 0.3s ease;
-        }
-
-        #update-banner {
-            position: fixed; 
-            bottom: 30px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            background: #333; 
-            color: white; 
-            padding: 16px 28px; 
-            border-radius: 50px;
-            display: none; 
-            align-items: center;
-            justify-content: center;
-            z-index: 1000; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 0.8s linear infinite;
-            margin-right: 12px;
-        }
-
+        body { font-family: -apple-system, sans-serif; text-align: center; background: #f8f9fa; margin: 0; padding: 20px; padding-top: env(safe-area-inset-top); display: flex; flex-direction: column; min-height: 100vh; }
+        .gallery { display: flex; flex-direction: column; align-items: center; gap: 20px; flex-grow: 1; }
+        .gallery img { width: 90%; max-width: 500px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        #update-banner { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 16px 28px; border-radius: 50px; display: none; align-items: center; z-index: 1000; cursor: pointer; font-weight: 600; }
+        .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; margin-right: 12px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        footer {
-            margin-top: 40px;
-            padding: 20px;
-            font-size: 0.8rem;
-            color: #888;
-        }
+        footer { margin-top: 40px; padding: 20px; font-size: 0.8rem; color: #888; }
     </style>
 </head>
 <body>
-
-    <h1>Welcome to my very new Gemini Pet Shop ver 14</h1>
-    
+    <h1>Welcome to my very new Gemini Pet Shop ver 15</h1>
     <div class="gallery">
         <img src="images/dog.png" alt="Cyberpunk Dogs">
         <img src="images/cat.png" alt="Psychedelic Cat">
     </div>
-
     <div id="update-banner" onclick="activateUpdate()">
         <span id="banner-content">New version available! Tap to update.</span>
     </div>
-
-    <footer>
-        Version: 14.0.1
-    </footer>
-
+    <footer>Version: 1.0.1</footer>
     <script>
         let newWorker;
         let refreshing = false; 
 
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then(reg => {
-                    reg.addEventListener('updatefound', () => {
-                        newWorker = reg.installing;
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                showBanner();
-                            }
-                        });
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                reg.addEventListener('updatefound', () => {
+                    newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            document.getElementById('update-banner').style.display = 'flex';
+                        }
                     });
                 });
             });
         }
 
-        function showBanner() {
-            const banner = document.getElementById('update-banner');
-            if (banner.style.display !== 'flex') {
-                banner.style.display = 'flex';
-            }
-        }
-
         function activateUpdate() {
             if (newWorker) {
-                const bannerContent = document.getElementById('banner-content');
-                const banner = document.getElementById('update-banner');
-                bannerContent.innerHTML = '<div class="spinner"></div> Loading new version...';
-                banner.style.pointerEvents = 'none';
+                document.getElementById('banner-content').innerHTML = '<div class="spinner"></div> Loading...';
+                document.getElementById('update-banner').style.pointerEvents = 'none';
                 newWorker.postMessage({ action: 'skipWaiting' });
             }
         }
 
-        // Guard against infinite reload loops 
+        // The "text1.txt" fix: Reload once and only once
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             if (refreshing) return;
             refreshing = true;
