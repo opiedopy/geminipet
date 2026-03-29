@@ -18,31 +18,6 @@
         body { font-family: -apple-system, sans-serif; text-align: center; background: #f8f9fa; margin: 0; padding: 20px; padding-top: env(safe-area-inset-top); display: flex; flex-direction: column; min-height: 100vh; }
         .gallery { display: flex; flex-direction: column; align-items: center; gap: 20px; flex-grow: 1; }
         .gallery img { width: 90%; max-width: 500px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-        #update-banner {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #ffeb3b;
-            color: #333;
-            padding: 15px 20px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 9999;
-            text-align: center;
-            flex-direction: column;
-            gap: 10px;
-        }
-        #update-banner button {
-            background: #e91e63;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            cursor: pointer;
-        }
         footer { margin-top: 40px; padding: 20px; font-size: 0.9rem; color: #444; font-weight: bold; }
     </style>
 </head>
@@ -53,55 +28,16 @@
         <img src="images/cat.png" alt="Cat">
     </div>
 
-    <!-- Update Ready Banner -->
-    <div id="update-banner">
-        <div>🎉 A new version of My Pet Shop is ready!</div>
-        <button onclick="updateApp()">Update Now</button>
-    </div>
-
     <footer>Version: 4444.0.49</footer>
 
     <script>
-        let newWorker;
-
-        function showUpdateBanner() {
-            document.getElementById('update-banner').style.display = 'flex';
-        }
-
-        function updateApp() {
-            if (newWorker) {
-                newWorker.postMessage({ type: 'SKIP_WAITING' });
-            }
-        }
-
         if ('serviceWorker' in navigator) {
-            // Cache-busting version query (critical for Safari)
+            // Cache-busting version query (kept for Safari compatibility)
             navigator.serviceWorker.register('sw.js?v=5', { scope: './' })
                 .then(registration => {
                     console.log('Service Worker registered');
-
-                    // iOS + Chrome safe check: only show banner if there's truly an update waiting
-                    if (registration.waiting && navigator.serviceWorker.controller) {
-                        newWorker = registration.waiting;
-                        showUpdateBanner();
-                    }
-
-                    // Listen for future updates (this path was working perfectly on iOS before)
-                    registration.addEventListener('updatefound', () => {
-                        newWorker = registration.installing;
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                showUpdateBanner();
-                            }
-                        });
-                    });
                 })
                 .catch(err => console.error('Service Worker registration failed:', err));
-
-            // Clean reload when new worker takes control
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                window.location.reload();
-            });
         }
     </script>
 </body>
