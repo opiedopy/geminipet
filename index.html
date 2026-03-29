@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Welcome to my Pet Shop</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="images/curler-hamster-icon.png">
+    
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; background: #f0f0f0; margin: 0; padding: 20px; }
+        h1 { color: #333; }
+        .gallery img { width: 90%; max-width: 500px; border-radius: 15px; margin: 10px 0; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        
+        /* Update Banner [cite: 31, 33] */
+        #update-banner {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 15px 25px; border-radius: 30px;
+            display: none; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
 
+    <h1>Welcome to my Pet Shop</h1> [cite: 1]
+    
+    <div class="gallery">
+        <img src="images/dog.png" alt="Cyberpunk Dogs"> [cite: 1, 22]
+        <img src="images/cat.png" alt="Psychedelic Cat"> [cite: 1, 24]
+    </div>
+
+    <div id="update-banner" onclick="activateUpdate()">
+        New version available! Tap to update.
+    </div>
+
+    <script>
+        let newWorker;
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                reg.addEventListener('updatefound', () => {
+                    newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            showBanner();
+                        }
+                    });
+                });
+            });
+        }
+
+        function showBanner() {
+            const banner = document.getElementById('update-banner');
+            if (banner.style.display !== 'block') { [cite: 33]
+                banner.style.display = 'block';
+            }
+        }
+
+        function activateUpdate() {
+            if (newWorker) {
+                newWorker.postMessage({ action: 'skipWaiting' }); [cite: 8, 32]
+            }
+        }
+
+        // Reload once the new service worker takes control
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>
