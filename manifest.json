@@ -1,7 +1,7 @@
 {
-  "name": "My Pet Shop 2",
-  "short_name": "PetShop2",
-  "start_url": "/mypetshop2/index.html",
+  "name": "gempet",
+  "short_name": "gempet2",
+  "start_url": "/geminipet/index.html",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#333333",
