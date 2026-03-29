@@ -3,7 +3,7 @@
 */
 
 // [STEP 1] Update Workflow: Change 'v1' to 'v2', 'v3', etc. to trigger the banner 
-const CACHE_VERSION = 'v1'; 
+const CACHE_VERSION = 'v9'; 
 const CACHE_NAME = `mypetshop-cache-${CACHE_VERSION}`;
 
 // [STEP 2] Define Assets to Cache [cite: 5, 13-25]
